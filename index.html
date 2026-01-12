@@ -1,0 +1,55 @@
+
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Physics Sandbox</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<link rel="stylesheet" href="style.css">
+	</head>
+	<body>
+		<div id="ui">
+			<div class="tools">
+				<label>Tool:</label>
+				<select id="toolSelect">
+					<option value="wall">Wall (draw)</option>
+					<option value="box">Box</option>
+					<option value="circle">Circle</option>
+					<option value="polygon">Polygon</option>
+					<option value="launcher">Launcher</option>
+					<option value="mass">Gravity Mass</option>
+					<option value="erase">Eraser</option>
+				</select>
+				<button id="clearBtn">Clear</button>
+			</div>
+			<div class="settings">
+				<label>Global Gravity: <span id="gravVal">1</span></label>
+				<input id="gravRange" type="range" min="0" max="2" step="0.01" value="1">
+				<label>Mass Strength: <span id="massVal">500</span></label>
+				<input id="massRange" type="range" min="50" max="2000" step="10" value="500">
+			</div>
+		</div>
+
+		<div id="canvasWrap"></div>
+
+		<div id="instructions" class="instructions">
+			<div class="instr-head">
+				<strong>Controls</strong>
+				<button id="closeInstr" aria-label="Close instructions">✕</button>
+			</div>
+			<ul>
+				<li><b>Wall:</b> click-drag to draw static walls</li>
+				<li><b>Box / Circle / Polygon:</b> click to place objects</li>
+				<li><b>Launcher:</b> click-drag from point to set direction, release to fire</li>
+				<li><b>Gravity Mass:</b> click to place a gravity source (yellow)</li>
+				<li><b>Eraser:</b> click to remove objects under cursor</li>
+				<li><b>Clear:</b> remove all non-boundary objects</li>
+				<li>Adjust global gravity and mass strength with sliders.</li>
+			</ul>
+		</div>
+
+		<!-- Matter.js from CDN -->
+		<script src="https://unpkg.com/matter-js@0.19.0/build/matter.min.js"></script>
+		<script src="app.js"></script>
+	</body>
+</html>
