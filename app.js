@@ -47,6 +47,7 @@ console.log('app.js loaded (Matter sandbox)');
   overlay.className = 'band';
   overlay.width = width; overlay.height = height;
   overlay.style.left = '0'; overlay.style.top = '0'; overlay.style.width = '100%'; overlay.style.height = '100%';
+  overlay.style.touchAction = 'none';
   canvasWrap.appendChild(overlay);
   const octx = overlay.getContext('2d');
 
@@ -64,7 +65,8 @@ console.log('app.js loaded (Matter sandbox)');
     return { x: e.clientX - rect.left, y: e.clientY - rect.top };
   }
 
-  render.canvas.addEventListener('mousedown', (e)=>{
+  render.canvas.style.touchAction = 'none';
+  render.canvas.addEventListener('pointerdown', (e)=>{
     const p = worldPointFromMouse(e);
     if(currentTool === 'wall') dragStart = p;
     else if(currentTool === 'launcher') launcherAnchor = p;
@@ -79,7 +81,7 @@ console.log('app.js loaded (Matter sandbox)');
     }
   });
 
-  render.canvas.addEventListener('mousemove', (e)=>{
+  render.canvas.addEventListener('pointermove', (e)=>{
     const p = worldPointFromMouse(e);
     octx.clearRect(0,0,overlay.width, overlay.height);
     if(dragStart){
@@ -91,7 +93,7 @@ console.log('app.js loaded (Matter sandbox)');
     }
   });
 
-  render.canvas.addEventListener('mouseup', (e)=>{
+  render.canvas.addEventListener('pointerup', (e)=>{
     const p = worldPointFromMouse(e);
     if(currentTool === 'wall' && dragStart){
       const a = dragStart, b = p;
