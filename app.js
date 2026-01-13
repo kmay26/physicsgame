@@ -23,6 +23,49 @@ console.log('app.js loaded (Matter sandbox)');
   ];
   World.add(engine.world, walls);
 
+  // --- Prebuilt level and scoring ---
+  let score = 0;
+  function updateScoreUI(){ const el = document.getElementById('score'); if(el) el.textContent = String(score); }
+
+  // spawn an Angry-Birds-like arrangement: platforms, stacked boxes, and round targets (pigs)
+  function spawnLevel(){
+    // remove existing non-boundary bodies
+    const toRemove = engine.world.bodies.filter(b=> !walls.includes(b));
+    for(const b of toRemove) World.remove(engine.world, b);
+
+    // small static platform close to right side
+    const platform = Bodies.rectangle(width*0.75, height - 120, 320, 20, { isStatic: true, render:{ fillStyle: '#6b4f3f' } });
+    World.add(engine.world, platform);
+
+    // left small tower
+    const baseY = height - 140;
+    const lx = width*0.68;
+    for(let i=0;i<3;i++){
+      const box = Bodies.rectangle(lx, baseY - i*40, 40, 40, { restitution: 0.05, friction: 0.4, render:{ fillStyle: '#d35400' } });
+      World.add(engine.world, box);
+    }
+
+    // right taller tower
+    const rx = width*0.82;
+    for(let i=0;i<4;i++){
+      const box = Bodies.rectangle(rx, baseY - i*40, 40, 40, { restitution: 0.05, friction: 0.4, render:{ fillStyle: '#c0392b' } });
+      World.add(engine.world, box);
+    }
+
+    // place round targets (pigs) on top of towers
+    const pig1 = Bodies.circle(lx, baseY - 3*40 - 18, 18, { restitution: 0.1, render:{ fillStyle: '#27ae60' } }); pig1.isTarget = true; World.add(engine.world, pig1);
+    const pig2 = Bodies.circle(rx, baseY - 4*40 - 18, 18, { restitution: 0.1, render:{ fillStyle: '#27ae60' } }); pig2.isTarget = true; World.add(engine.world, pig2);
+
+    // a few loose boxes near base for extra points
+    World.add(engine.world, Bodies.rectangle(width*0.72, baseY+10, 50, 20, { render:{ fillStyle: '#8e44ad' } }));
+
+    // reset score for new level
+    score = 0; updateScoreUI();
+  }
+
+  // reset button hookup (DOM might be loaded later)
+  window.addEventListener('load', ()=>{ const r = document.getElementById('resetLevel'); if(r) r.addEventListener('click', spawnLevel); });
+
   // UI elements
   const toolSel = document.getElementById('toolSelect');
   const clearBtn = document.getElementById('clearBtn');
@@ -151,10 +194,26 @@ console.log('app.js loaded (Matter sandbox)');
     }
   });
 
+  // Award points when targets (pigs) are knocked down or fall
+  Events.on(engine, 'afterUpdate', ()=>{
+    const bodies = engine.world.bodies.slice();
+    for(const b of bodies){
+      if(b.isTarget && !b._scored){
+        if(b.position.y > height - 80 || Math.abs(b.angle) > Math.PI/3){
+          score += 100; b._scored = true; updateScoreUI();
+          setTimeout(()=>{ try{ World.remove(engine.world, b); }catch(e){} }, 80);
+        }
+      }
+    }
+  });
+
   // keep world size consistent if window resizes
   window.addEventListener('resize', ()=>{
     Render.lookAt(render, { min: { x: 0, y: 0 }, max: { x: window.innerWidth, y: window.innerHeight } });
   });
+
+  // Spawn the initial level
+  spawnLevel();
 
   // expose a small API for console experimentation
   window.Sandbox = { engine, world: engine.world, Matter, addBox:(x,y)=>World.add(engine.world, Bodies.rectangle(x,y,40,40)), addCircle:(x,y)=>World.add(engine.world, Bodies.circle(x,y,18)) };
