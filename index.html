@@ -9,6 +9,7 @@
 	</head>
 	<body>
 		<div id="ui">
+			<button id="closeUI" aria-label="Close toolbar">✕</button>
 			<div class="tools">
 				<label>Tool:</label>
 				<select id="toolSelect">
@@ -29,6 +30,7 @@
 				<input id="massRange" type="range" min="50" max="2000" step="10" value="500">
 			</div>
 		</div>
+		<button id="showUI" style="display:none;">Tools</button>
 
 		<div id="scorePanel">
 			<div class="score-row">Score: <span id="score">0</span></div>

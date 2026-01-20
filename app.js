@@ -107,6 +107,25 @@ console.log('app.js loaded (Matter sandbox)');
   // reset button hookup (DOM might be loaded later)
   window.addEventListener('load', ()=>{ const r = document.getElementById('resetLevel'); if(r) r.addEventListener('click', spawnLevel); });
 
+  // toolbar close/show handlers
+  window.addEventListener('load', ()=>{
+    const closeBtn = document.getElementById('closeUI');
+    const showBtn = document.getElementById('showUI');
+    const uiEl = document.getElementById('ui');
+    if(closeBtn && uiEl){
+      closeBtn.addEventListener('click', ()=>{
+        uiEl.style.display = 'none';
+        if(showBtn) showBtn.style.display = 'block';
+      });
+    }
+    if(showBtn && uiEl){
+      showBtn.addEventListener('click', ()=>{
+        uiEl.style.display = 'block';
+        showBtn.style.display = 'none';
+      });
+    }
+  });
+
   // create simple level controls UI
   function createLevelControls(){
     const ctrl = document.createElement('div');
